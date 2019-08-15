@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="60 seconds">
+	<property name="kanboardlog.base" value="/data/wwwroot/test/kanboard" />
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders 作用是将logger事件转换成字节数组，并将字节数组写入到输出流 -->
+        <encoder>
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %msg：日志消息，%n是换行符 -->
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%logger{36}] - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${kanboardlog.base}/kanboard.log</File>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%-5level] [%logger{0}] - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${kanboardlog.base}/kanboard.%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+    </appender>
+    
+    <!-- Error Level -->
+	<appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${kanboardlog.base}/kanboard_error.log</File>
+		 <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"> 
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%logger{0}] - %msg%n</pattern>
+        </encoder> 
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${kanboardlog.base}/kanboard_error.%d{yyyy-MM-dd}.log</FileNamePattern>
+		</rollingPolicy>
+	</appender>
+    
+   <appender name="monitor" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${kanboardlog.base}/kanboard_monitor.log</File>
+		 <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"> 
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符--> 
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%logger{0}] - %msg%n</pattern>
+        </encoder> 
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${kanboardlog.base}/kanboard_monitor.%d{yyyy-MM-dd}.log</FileNamePattern>
+		</rollingPolicy>
+	</appender>
+
+    <logger name="com.cn.dpi.dao" level="DEBUG">
+        <appender-ref ref="console" />
+        <appender-ref ref="info" />
+    </logger>
+
+    <logger name="org.apache.zookeeper" level="INFO">
+        <appender-ref ref="console" />
+        <appender-ref ref="info" />
+        <appender-ref ref="error" />
+    </logger>
+
+    <root level="debug">
+    	<appender-ref ref="console" /> 
+        <appender-ref ref="info" />
+        <appender-ref ref="error" />
+    </root>
+    <!--限制xxl-job日志输出-->
+    <!--<logger name="com.xxl.job.core" level="ERROR"/>-->
+    <!--<logger name="org.eclipse.jetty" level="ERROR"/>-->
+    <!-- 监控日志 -->
+    <logger name ="monitor">
+		<appender-ref ref="monitor" />
+	</logger>
+</configuration>
